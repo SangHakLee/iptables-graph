@@ -3,10 +3,29 @@ import sys
 import re
 import string
 
-all_chains = {	'raw':	    {'PREROUTING':list(), 'OUTPUT':list()},
-        'filter':   {'INPUT':list(), 'OUTPUT':list(), 'FORWARD':list()},
-        'nat':	    {'PREROUTING':list(), 'OUTPUT':list(), 'POSTROUTING':list()},
-        'mangle':   {'PREROUTING':list(), 'INPUT':list(), 'OUTPUT':list(), 'FORWARD':list(), 'POSTROUTING':list()}}
+all_chains = {
+    'raw': {
+        'PREROUTING': list(),
+        'OUTPUT': list()
+    },
+    'filter': {
+        'INPUT': list(),
+        'OUTPUT': list(),
+        'FORWARD':list()
+    },
+    'nat': {
+        'PREROUTING':list(),
+        'OUTPUT':list(),
+        'POSTROUTING':list()
+    },
+    'mangle': {
+        'PREROUTING':list(),
+        'INPUT':list(),
+        'OUTPUT':list(),
+        'FORWARD':list(),
+        'POSTROUTING':list()
+    }
+}
 
 defualt_chain_list = ['PREROUTING', 'FORWARD', 'INPUT', 'OUTPUT', 'POSTROUTING']
 
@@ -92,19 +111,19 @@ def default_chain_link(src_table_name, src_chain_name, dst_table_name, dst_chain
     return source_node + """ -> """ + target_node + """ [color=red];
 """
 
-output += default_chain_link('raw',	'PREROUTING',	'mangle',   'PREROUTING')
+output += default_chain_link('raw',	    'PREROUTING',	'mangle',   'PREROUTING')
 output += default_chain_link('mangle',	'PREROUTING',	'nat',	    'PREROUTING')
-output += default_chain_link('nat',	'PREROUTING',	'mangle',   'INPUT')
-output += default_chain_link('mangle',	'INPUT',	'filter',   'INPUT')
-output += default_chain_link('filter',	'INPUT',	'raw',	    'OUTPUT')
-output += default_chain_link('raw',	'OUTPUT',	'mangle',   'OUTPUT')
-output += default_chain_link('mangle',	'OUTPUT',	'nat',	    'OUTPUT')
-output += default_chain_link('nat',	'OUTPUT',	'filter',   'OUTPUT')
-output += default_chain_link('filter',	'OUTPUT',	'mangle',   'POSTROUTING')
+output += default_chain_link('nat',	    'PREROUTING',	'mangle',   'INPUT')
+output += default_chain_link('mangle',	'INPUT',	    'filter',   'INPUT')
+output += default_chain_link('filter',	'INPUT',	    'raw',	    'OUTPUT')
+output += default_chain_link('raw',	    'OUTPUT',	    'mangle',   'OUTPUT')
+output += default_chain_link('mangle',	'OUTPUT',	    'nat',	    'OUTPUT')
+output += default_chain_link('nat',	    'OUTPUT',	    'filter',   'OUTPUT')
+output += default_chain_link('filter',	'OUTPUT',	    'mangle',   'POSTROUTING')
 output += default_chain_link('mangle',	'POSTROUTING',	'nat',	    'POSTROUTING')
-output += default_chain_link('nat',	'PREROUTING',	'mangle',   'FORWARD')
-output += default_chain_link('mangle',	'FORWARD',	'filter',   'FORWARD')
-output += default_chain_link('filter',	'FORWARD',	'mangle',   'POSTROUTING')
+output += default_chain_link('nat',	    'PREROUTING',	'mangle',   'FORWARD')
+output += default_chain_link('mangle',	'FORWARD',	    'filter',   'FORWARD')
+output += default_chain_link('filter',	'FORWARD',	    'mangle',   'POSTROUTING')
 
 output += """
 }"""
