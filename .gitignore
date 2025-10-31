@@ -14,6 +14,10 @@ build/
 dist/
 *.spec.bak
 
+# Python package builds
+*.egg
+.eggs/
+
 # Nuitka build artifacts
 *.bin
 *.build/

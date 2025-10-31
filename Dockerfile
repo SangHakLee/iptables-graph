@@ -36,7 +36,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy source files
-COPY iptables-graph.py .
+COPY VERSION .
+COPY src/ ./src/
 COPY iptables-graph.spec .
 
 # Build the executable

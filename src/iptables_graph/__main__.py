@@ -5,7 +5,6 @@ import re
 import tempfile
 import subprocess
 import os
-from datetime import datetime
 
 # Table names
 raw = "raw"
@@ -243,12 +242,6 @@ def convert_dot(dot_text, fmt):
             os.remove(tmp_output_path)
 
 
-def generate_filename(ext):
-    """Generate a timestamped filename."""
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    return f"iptables_graph_{timestamp}.{ext}"
-
-
 def main():
     """Main function."""
     parser = argparse.ArgumentParser(
@@ -262,7 +255,7 @@ def main():
     )
     parser.add_argument(
         "-o", "--output",
-        help="Output file (default: stdout for dot/svg, auto-named for png)"
+        help="Output file (default: stdout)"
     )
     parser.add_argument(
         "-f", "--format",
@@ -305,12 +298,10 @@ def main():
     elif args.format == "png":
         png_data = convert_dot(dot_output, "png")
         if args.output:
-            output_path = args.output
+            with open(args.output, "wb") as f:
+                f.write(png_data)
         else:
-            output_path = generate_filename("png")
-            print(f"📝 PNG output written to {output_path}", file=sys.stderr)
-        with open(output_path, "wb") as f:
-            f.write(png_data)
+            sys.stdout.buffer.write(png_data)
 
 
 if __name__ == "__main__":

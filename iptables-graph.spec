@@ -3,7 +3,7 @@
 # Build with: pyinstaller iptables-graph.spec
 
 a = Analysis(
-    ['iptables-graph.py'],
+    ['src/iptables_graph/__main__.py'],
     pathex=[],
     datas=[],
     binaries=[('/usr/bin/dot', 'dot')],

@@ -1,7 +1,12 @@
-Iptables-graph
-======================
+# iptables-graph
 
 Visualize iptables packet flow as Graphviz diagrams. Convert `iptables-save` output to DOT, SVG, or PNG formats.
+
+> Inspired by [AChingYo/iptables-graph](https://github.com/AChingYo/iptables-graph)
+
+[![PyPI](https://img.shields.io/pypi/v/iptables-graph)](https://pypi.org/project/iptables-graph/)
+[![Docker](https://img.shields.io/docker/v/sanghaklee/iptables-graph?label=docker)](https://hub.docker.com/r/sanghaklee/iptables-graph)
+[![License](https://img.shields.io/github/license/SangHakLee/iptables-graph)](LICENSE)
 
 ## Features
 
@@ -9,132 +14,122 @@ Visualize iptables packet flow as Graphviz diagrams. Convert `iptables-save` out
 - 🎨 Color-coded tables and chains for easy understanding
 - 🔗 Show custom chains and jump targets
 - 📤 Multiple output formats: DOT, SVG, PNG
-- 🐳 Docker-based workflow (no host dependencies!)
-- 📦 Optional: Install as Python package (DOT output only)
+- 🐳 Docker-based (no host dependencies!)
+- 📦 PyPI package (pip install)
 
-## Quick Start (Docker - Recommended)
+## Quick Start
 
-### 1. Build the Docker image
+### Option 1: Docker (Recommended)
 
-```bash
-# Clone the repository
-git clone https://github.com/AChingYo/iptables-graph.git
-cd iptables-graph
-
-# Build Docker image
-docker build -t iptables-graph .
-
-# Or use make
-make docker-build
-```
-
-### 2. Use it!
+No installation required! Just pull and run:
 
 ```bash
-# Basic usage: DOT format to stdout
-sudo iptables-save | docker run --rm -i iptables-graph
+# Pull from Docker Hub
+docker pull sanghaklee/iptables-graph
+
+# Use it
+sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph
 
 # Generate SVG
-sudo iptables-save | docker run --rm -i iptables-graph -f svg > graph.svg
+sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph -f svg > graph.svg
 
 # Generate PNG
-sudo iptables-save | docker run --rm -i iptables-graph -f png > graph.png
-
-# Using a file as input
-docker run --rm -v $(pwd):/data iptables-graph \
-  -i /data/examples/example.iptables -f svg -o /data/output.svg
+sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph -f png > graph.png
 ```
 
-### 3. Create an alias for convenience
+**Create an alias for convenience:**
 
 ```bash
-# Add to your ~/.bashrc or ~/.zshrc
-alias iptables-graph='docker run --rm -i iptables-graph'
+# Add to ~/.bashrc or ~/.zshrc
+alias iptables-graph='docker run --rm -i sanghaklee/iptables-graph'
 
-# Now you can use it like a regular command
+# Now use it like a regular command
 sudo iptables-save | iptables-graph
 sudo iptables-save | iptables-graph -f svg > graph.svg
 ```
 
-## Installation Options
+### Option 2: PyPI Package
 
-### Option 1: Docker (Recommended)
-
-✅ **Advantages:**
-- No host dependencies required
-- All features work (DOT/SVG/PNG)
-- Consistent environment
-- Easy to distribute
-
-```bash
-docker build -t iptables-graph .
-sudo iptables-save | docker run --rm -i iptables-graph
-```
-
-### Option 2: Python Package (pip)
-
-⚠️ **Limitations:**
-- DOT format output only
-- Requires manual installation of graphviz for SVG/PNG conversion
-- Lighter weight
+Install via pip:
 
 ```bash
 pip install iptables-graph
+```
 
-# Use it
+Use it:
+
+```bash
+# Generate DOT format
 sudo iptables-save | iptables-graph > graph.dot
 
-# Convert to SVG manually (requires graphviz)
-dot -Tsvg graph.dot -o graph.svg
+# Generate SVG (requires graphviz installed)
+sudo iptables-save | iptables-graph -f svg > graph.svg
+
+# Generate PNG (requires graphviz installed)
+sudo iptables-save | iptables-graph -f png > graph.png
 ```
 
-### Option 3: Standalone Executable
-
-Extract executable from Docker (no Docker runtime needed after build):
-
+**Note**: For SVG/PNG conversion, you need to install graphviz:
 ```bash
-make docker-build-exe
-# Executable is now in dist/iptables-graph
+# Debian/Ubuntu
+sudo apt-get install graphviz
 
-sudo iptables-save | ./dist/iptables-graph
+# RHEL/CentOS
+sudo yum install graphviz
+
+# macOS
+brew install graphviz
 ```
 
-## Usage Examples
+## Usage
 
-### Basic DOT output
+### Basic DOT Output
 
 ```bash
-sudo iptables-save | docker run --rm -i iptables-graph
+sudo iptables-save | iptables-graph
 ```
 
-### Generate SVG diagram
-
-```bash
-sudo iptables-save | docker run --rm -i iptables-graph -f svg > graph.svg
+Output:
+```dot
+digraph {
+    graph [pad="0.5", nodesep="0.5", ranksep="2"];
+    node [shape=plain]
+    rankdir=LR;
+    ...
+}
 ```
 
-### Generate PNG image
+### Generate SVG Diagram
 
 ```bash
-sudo iptables-save | docker run --rm -i iptables-graph -f png > graph.png
+sudo iptables-save | iptables-graph -f svg > graph.svg
 ```
 
-### Read from file, write to file
+### Generate PNG Image
 
 ```bash
-docker run --rm -v $(pwd):/data iptables-graph \
-  -i /data/input.txt -f svg -o /data/output.svg
+sudo iptables-save | iptables-graph -f png > graph.png
 ```
 
-### Test with included examples
+### Read from File
 
 ```bash
-# Using Docker
-cat examples/example.iptables | docker run --rm -i iptables-graph
+# Save iptables rules to file
+sudo iptables-save > rules.txt
 
-# Using make
-make docker-test
-make docker-test-run  # Tests all formats (DOT/SVG/PNG)
+# Generate diagram
+cat rules.txt | iptables-graph -f svg > diagram.svg
+```
+
+### Using with Docker Volumes
+
+```bash
+# For file input/output with Docker
+docker run --rm sanghaklee/iptables-graph \
+  -v $(pwd):/data
+  -i /data/iptables-save.txt 
+  -f svg 
+  -o /data/diagram.svg
 ```
 
 ## Command Line Options
@@ -149,71 +144,14 @@ optional arguments:
   -i INPUT, --input INPUT
                         Input file (default: stdin)
   -o OUTPUT, --output OUTPUT
-                        Output file (default: stdout for dot/svg, auto-named for png)
+                        Output file (default: stdout)
   -f {dot,svg,png}, --format {dot,svg,png}
                         Output format: dot (default), svg, or png
 ```
 
-## Docker Hub (Optional)
+## Example Output
 
-You can push your built image to Docker Hub for easy distribution:
-
-```bash
-# Build and push
-make docker-push DOCKER_REGISTRY=yourusername/
-
-# Others can then use:
-docker pull yourusername/iptables-graph:latest
-sudo iptables-save | docker run --rm -i yourusername/iptables-graph
-```
-
-## Development
-
-### Build locally with PyInstaller
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Build executable
-make build
-
-# Test
-make test
-make test-svg
-make test-png
-```
-
-### Run tests
-
-```bash
-# Test Python script
-make test
-
-# Test Docker container
-make docker-test
-make docker-test-run
-```
-
-### Clean up
-
-```bash
-# Clean local build artifacts
-make clean
-
-# Clean Docker images
-make docker-clean
-```
-
-## Example Graph
-
-![example.svg](https://raw.githubusercontent.com/AChingYo/iptables-graph/main/example.svg)
-
-## How It Works
-
-1. **Parse** `iptables-save` output to extract rules, chains, and policies
-2. **Generate** Graphviz DOT format with color-coded tables
-3. **Convert** (optional) to SVG or PNG using graphviz
+![example.svg](https://raw.githubusercontent.com/SangHakLee/iptables-graph/main/example.svg)
 
 ### Color Scheme
 
@@ -222,24 +160,32 @@ make docker-clean
 - 🟣 **nat** table: Purple (#E5D1FA)
 - 🟢 **filter** table: Green (#BEF0CB)
 
+## How It Works
+
+1. **Parse** `iptables-save` output to extract rules, chains, and policies
+2. **Generate** Graphviz DOT format with color-coded tables
+3. **Convert** (optional) to SVG or PNG using graphviz
+
 ## Requirements
 
 ### Docker Method
-- Docker
+- Docker only
 
-### Local Build Method
-- Python 3.9+
-- PyInstaller (for building executable)
-- Graphviz (for SVG/PNG conversion)
-
-### Python Package Method
-- Python 3.9+
+### PyPI Method
+- Python 3.7+
 - Graphviz (optional, for SVG/PNG conversion)
+
+## Contributing
+
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, building, and release process.
 
 ## License
 
 [MIT License](LICENSE)
 
-## Contributing
+## Links
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+- PyPI: https://pypi.org/project/iptables-graph/
+- Docker Hub: https://hub.docker.com/r/sanghaklee/iptables-graph
+- GitHub: https://github.com/SangHakLee/iptables-graph
+- Issues: https://github.com/SangHakLee/iptables-graph/issues

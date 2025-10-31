@@ -1,15 +1,18 @@
 # Makefile for iptables-graph project
 
 APP_NAME = iptables-graph
-SCRIPT = $(APP_NAME).py
+SCRIPT = src/iptables_graph/__main__.py
 DIST_DIR = dist
 BUILD_DIR = build
 EXAMPLE = examples/example.iptables
 
+# Version management
+VERSION := $(shell cat VERSION)
+
 # Docker configuration
 DOCKER_IMAGE = $(APP_NAME)
-DOCKER_TAG ?= latest
-DOCKER_REGISTRY ?= # Set your registry (e.g., username/ or ghcr.io/username/)
+DOCKER_TAG ?= $(VERSION)
+DOCKER_REGISTRY ?= sanghaklee
 DOCKER_FULL_IMAGE = $(DOCKER_REGISTRY)$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 .PHONY: all build test test-svg test-png clean help
@@ -55,7 +58,7 @@ clean:
 
 # Show help
 help:
-	@echo "iptables-graph Makefile"
+	@echo "iptables-graph v$(VERSION)"
 	@echo ""
 	@echo "Local build targets:"
 	@echo "  make build         - Build standalone executable with PyInstaller"
@@ -76,7 +79,7 @@ help:
 	@echo ""
 	@echo "Quick start (Docker):"
 	@echo "  make docker-build && make docker-test-run"
-	@echo "  sudo iptables-save | docker run --rm -i iptables-graph:latest"
+	@echo "  sudo iptables-save | docker run --rm -i iptables-graph:$(VERSION)"
 	@echo ""
 	@echo "  make help          - Show this help message"
 
