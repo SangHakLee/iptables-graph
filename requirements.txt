@@ -1,0 +1,14 @@
+# Requirements for iptables-graph
+
+# For building standalone executable
+pyinstaller>=5.0
+
+# Note: The main script (iptables-graph.py) only uses Python standard library
+# modules and has no external dependencies. This requirements.txt is only
+# needed for building the executable with PyInstaller.
+
+# System dependencies (not Python packages):
+# - graphviz (provides 'dot' binary for format conversion)
+#   Install with: apt-get install graphviz (Debian/Ubuntu)
+#                 yum install graphviz (RHEL/CentOS)
+#                 brew install graphviz (macOS)

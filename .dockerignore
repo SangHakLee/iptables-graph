@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# IDE
+.idea
+.vscode
+.claude
+
+# Python
+.venv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Build artifacts
+build/
+dist/
+*.bin
+*.build/
+*.dist/
+*.onefile-build/
+dot/
+
+# Test outputs
+*.dot
+*.svg
+*.png
+test-output.*
+
+# Documentation
+README.md
+LICENSE
+CLAUDE.md
+
+# Docker
+Dockerfile
+.dockerignore

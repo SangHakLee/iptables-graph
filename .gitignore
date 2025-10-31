@@ -1,0 +1,32 @@
+# IDE
+.idea
+
+# Python
+.venv
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.eggs/
+
+# PyInstaller build artifacts
+build/
+dist/
+*.spec.bak
+
+# Nuitka build artifacts
+*.bin
+*.build/
+*.dist/
+*.onefile-build/
+
+# Graphviz binaries
+dot/
+
+# Test outputs (uncomment if you want to gitignore all test outputs)
+# *.dot
+# *.svg
+# *.png
+
+# Generated documentation
+CLAUDE.md
