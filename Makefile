@@ -1,5 +1,7 @@
 # Makefile for iptables-graph project
 
+SHELL := /bin/bash
+
 APP_NAME = iptables-graph
 SCRIPT = src/iptables_graph/__main__.py
 DIST_DIR = dist
