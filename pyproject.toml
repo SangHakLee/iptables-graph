@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "iptables-graph"
-version = "0.1.0"  # Managed by semantic-release
+version = "1.0.0"  # Managed by semantic-release
 description = "Visualize iptables packet flow as Graphviz diagrams"
 authors = ["sanghaklee <code.ryan.lee@gmail.com>"]
 license = "MIT"
@@ -46,8 +46,7 @@ iptables-graph = "iptables_graph.__main__:main"
 # ============================================================================
 [tool.semantic_release]
 version_toml = ["pyproject.toml:tool.poetry.version"]
-build_command = "python -m build"
-commit_message = "chore(release): {version}\n\n🤖 Generated with semantic-release"
+commit_message = "chore(release): {version}"
 major_on_zero = false
 tag_format = "v{version}"
 
