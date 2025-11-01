@@ -151,7 +151,7 @@ optional arguments:
 
 ## Example Output
 
-![example.png](examples/example.png)
+![example.png](https://raw.githubusercontent.com/SangHakLee/iptables-graph/refs/heads/main/examples/example.png)
 
 ### Color Scheme
 

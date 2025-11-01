@@ -9,8 +9,8 @@ EXAMPLE = examples/example.iptables
 # Python command (can be overridden: make pypi-build PYTHON=python)
 PYTHON ?= python3
 
-# Version management
-VERSION := $(shell cat VERSION)
+# Version management (read from pyproject.toml)
+VERSION := $(shell grep '^version = ' pyproject.toml | head -1 | cut -d '"' -f 2)
 
 # Docker configuration
 DOCKER_IMAGE = $(APP_NAME)
@@ -21,6 +21,7 @@ DOCKER_FULL_IMAGE = $(DOCKER_REGISTRY)$(DOCKER_IMAGE):$(DOCKER_TAG)
 .PHONY: all build test test-svg test-png clean help
 .PHONY: docker-build docker-build-exe docker-run docker-test docker-test-run docker-push docker-clean
 .PHONY: pypi-build pypi-check pypi-upload pypi-test-upload pypi-clean
+.PHONY: release version-bump changelog version-check
 
 all: build
 
@@ -109,6 +110,48 @@ pypi-clean:
 	rm -rf dist/ build/ src/*.egg-info/
 	@echo "==> PyPI cleanup complete"
 
+# ============================================================================
+# Semantic Release targets (Conventional Commits)
+# ============================================================================
+
+# Check what version would be released
+version-check:
+	@echo "==> Checking next version..."
+	semantic-release version --print
+
+# Automatic version bump based on conventional commits
+version-bump:
+	@echo "==> Bumping version based on conventional commits..."
+	semantic-release version --no-push --no-tag --no-changelog
+	@echo "==> Version updated in pyproject.toml and __init__.py"
+
+# Generate CHANGELOG
+changelog:
+	@echo "==> Generating CHANGELOG..."
+	semantic-release changelog
+	@echo "==> CHANGELOG.md generated"
+
+# Full release: version bump + changelog + tag + push
+release:
+	@echo "==> Creating new release with semantic-release..."
+	@echo "This will:"
+	@echo "  1. Analyze commits since last release"
+	@echo "  2. Determine next version (major/minor/patch)"
+	@echo "  3. Update version in pyproject.toml and __init__.py"
+	@echo "  4. Generate/update CHANGELOG.md"
+	@echo "  5. Create git commit and tag"
+	@echo "  6. Push to GitHub"
+	@echo ""
+	@read -p "Continue? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		semantic-release version; \
+		echo "==> Release complete!"; \
+		echo "==> Don't forget to run 'make pypi-upload' if you want to publish to PyPI"; \
+	else \
+		echo "==> Release cancelled"; \
+	fi
+
 # Show help
 help:
 	@echo "iptables-graph v$(VERSION)"
@@ -137,9 +180,20 @@ help:
 	@echo "  make pypi-upload       - Upload to production PyPI (requires confirmation)"
 	@echo "  make pypi-clean        - Remove PyPI build artifacts"
 	@echo ""
+	@echo "Semantic Release targets (Conventional Commits):"
+	@echo "  make version-check     - Check what version would be released"
+	@echo "  make version-bump      - Bump version based on commits (no commit/tag)"
+	@echo "  make changelog         - Generate CHANGELOG.md"
+	@echo "  make release           - Full release (version + changelog + tag + push)"
+	@echo ""
 	@echo "Quick start (Docker):"
 	@echo "  make docker-build && make docker-test-run"
 	@echo "  sudo iptables-save | docker run --rm -i iptables-graph:$(VERSION)"
+	@echo ""
+	@echo "Conventional Commits Format:"
+	@echo "  feat: new feature (minor version bump)"
+	@echo "  fix: bug fix (patch version bump)"
+	@echo "  BREAKING CHANGE: breaking change (major version bump)"
 	@echo ""
 	@echo "  make help          - Show this help message"
 

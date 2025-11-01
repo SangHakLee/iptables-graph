@@ -1,17 +1,16 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "iptables-graph"
-dynamic = ["version"]
+version = "0.1.0"  # Managed by semantic-release
 description = "Visualize iptables packet flow as Graphviz diagrams"
+authors = ["sanghaklee <code.ryan.lee@gmail.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.7"
-license = {text = "MIT"}
-authors = [
-    {name = "sanghaklee", email = "code.ryan.lee@gmail.com"}
-]
+homepage = "https://github.com/SangHakLee/iptables-graph"
+repository = "https://github.com/SangHakLee/iptables-graph"
 keywords = ["iptables", "firewall", "visualization", "graphviz", "network", "security"]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -29,31 +28,58 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Operating System :: POSIX :: Linux",
 ]
+packages = [{include = "iptables_graph", from = "src"}]
 
-[project.urls]
-Homepage = "https://github.com/SangHakLee/iptables-graph"
-Repository = "https://github.com/SangHakLee/iptables-graph"
+[tool.poetry.dependencies]
+python = "^3.7"
 
-[project.scripts]
+[tool.poetry.group.dev.dependencies]
+pyinstaller = ">=5.0"
+pytest = ">=7.0"
+python-semantic-release = "^8.0.0"
+
+[tool.poetry.scripts]
 iptables-graph = "iptables_graph.__main__:main"
 
-[tool.setuptools]
-package-dir = {"" = "src"}
+# ============================================================================
+# Semantic Release Configuration
+# ============================================================================
+[tool.semantic_release]
+version_toml = ["pyproject.toml:tool.poetry.version"]
+build_command = "python -m build"
+commit_message = "chore(release): {version}\n\n🤖 Generated with semantic-release"
+major_on_zero = false
+tag_format = "v{version}"
 
-[tool.setuptools.packages.find]
-where = ["src"]
+[tool.semantic_release.branches.main]
+match = "main"
+prerelease = false
 
-[tool.setuptools.dynamic]
-version = {file = "VERSION"}
+[tool.semantic_release.changelog]
+changelog_file = "CHANGELOG.md"
+exclude_commit_patterns = []
 
-[project.optional-dependencies]
-# Optional: graphviz Python package (not the system binary)
-# This is for users who want SVG/PNG conversion
-# Note: Still requires system graphviz package to be installed
-graphviz = ["graphviz>=0.20"]
+[tool.semantic_release.changelog.environment]
+block_start_string = "{%"
+block_end_string = "%}"
+variable_start_string = "{{"
+variable_end_string = "}}"
 
-# Development dependencies
-dev = [
-    "pyinstaller>=5.0",
-    "pytest>=7.0",
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "feat",
+    "fix",
+    "docs",
+    "style",
+    "refactor",
+    "perf",
+    "test",
+    "build",
+    "ci",
+    "chore"
 ]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf"]
+
+[tool.semantic_release.remote.token]
+env = "GH_TOKEN"

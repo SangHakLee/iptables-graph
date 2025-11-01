@@ -85,19 +85,21 @@ make docker-build-exe
 
 ## Version Management
 
-The project uses a single `VERSION` file for all version management:
+The project uses **pyproject.toml** with **semantic-release** for automatic version management:
+
+- Version is defined in `pyproject.toml` under `[tool.poetry]`
+- Automatically bumped by `semantic-release` based on commit messages
+- Uses Conventional Commits format (see Releasing section below)
 
 ```bash
-# Update version
-echo "1.0.1" > VERSION
+# Check current version
+grep '^version = ' pyproject.toml
 
-# Build with new version
-make docker-build
-# This creates: iptables-graph:1.0.1
+# Version is automatically updated by semantic-release
+make release
 
-# For PyPI
-python -m build
-# Version is read from VERSION file
+# Manual update (not recommended)
+# Edit pyproject.toml: version = "1.0.2"
 ```
 
 ## Code Structure
@@ -114,9 +116,8 @@ iptables-graph/
 ├── examples/                 # Example iptables files
 │   ├── example.iptables
 │   └── gcloud.iptables
-├── pyproject.toml           # Python package configuration
+├── pyproject.toml           # Python package configuration & version management
 ├── iptables-graph.spec      # PyInstaller spec file
-├── VERSION                  # Version file (single source of truth)
 ├── Dockerfile               # Docker build configuration
 ├── Makefile                 # Build automation
 ├── requirements.txt         # Build/dev dependencies
@@ -129,64 +130,109 @@ iptables-graph/
 - **`src/iptables_graph/`**: Main Python package (underscore for Python module naming)
   - `__init__.py`: Package initialization, version management
   - `__main__.py`: CLI entry point and main logic
-- **`VERSION`**: Single source of truth for version numbers
-- **`pyproject.toml`**: Defines PyPI package named `iptables-graph` (dash allowed in PyPI)
+- **`pyproject.toml`**: Package configuration and version management (Poetry + semantic-release)
 - **`iptables-graph.spec`**: PyInstaller configuration for building standalone executable
 - **`Dockerfile`**: Multi-stage build for optimized Docker images
 
 ## Releasing
 
-### 1. Update Version
+This project uses **Semantic Versioning** with **Conventional Commits** for automatic versioning and changelog generation.
 
-```bash
-echo "1.1.0" > VERSION
+### Conventional Commits Format
+
+Follow the Conventional Commits format for all commits:
+
+```
+<type>(<scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
 ```
 
-### 2. Build and Test
+**Types:**
+- `feat`: New feature (minor version bump: 1.0.0 → 1.1.0)
+- `fix`: Bug fix (patch version bump: 1.0.0 → 1.0.1)
+- `docs`: Documentation only changes
+- `style`: Code style changes (formatting, etc.)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `build`: Build system or dependencies
+- `ci`: CI configuration
+- `chore`: Other changes
+
+**Breaking Changes:**
+Add `BREAKING CHANGE:` in the footer for major version bump (1.0.0 → 2.0.0)
 
 ```bash
-# Test locally
-make test
+# Examples
+git commit -m "feat: add SVG output format"
+git commit -m "fix: handle empty iptables input"
+git commit -m "feat!: redesign CLI arguments
 
-# Build and test Docker
-make docker-build
-make docker-test-run
+BREAKING CHANGE: -o flag now requires explicit format type"
 ```
 
-### 3. Build PyPI Package
+### Automatic Release Workflow
+
+#### 1. Check Next Version
+
+See what version would be released based on commits:
 
 ```bash
-# Build package
-make pypi-build
+make version-check
+```
 
-# Check package
-make pypi-check
+#### 2. Create Release (Recommended)
 
-# Upload to TestPyPI (for testing)
+Automatically bump version, update changelog, and create git tag:
+
+```bash
+make release
+```
+
+This will:
+1. Analyze commits since last release
+2. Determine next version (major/minor/patch)
+3. Update `pyproject.toml` version
+4. Generate/update `CHANGELOG.md`
+5. Create git commit and tag
+6. Push to GitHub
+
+#### 3. Publish to PyPI
+
+```bash
+# Test on TestPyPI first
 make pypi-test-upload
 
-# Upload to production PyPI (requires credentials)
+# Publish to production PyPI
 make pypi-upload
 ```
 
-### 4. Push Docker Image
+#### 4. Publish Docker Image
 
 ```bash
-# Tag and push to Docker Hub
 make docker-push DOCKER_REGISTRY=yourusername/
-
-# Or manually
-docker tag iptables-graph:1.1.0 yourusername/iptables-graph:1.1.0
-docker tag iptables-graph:1.1.0 yourusername/iptables-graph:latest
-docker push yourusername/iptables-graph:1.1.0
-docker push yourusername/iptables-graph:latest
 ```
 
-### 5. Create Git Release
+### Manual Release (Not Recommended)
+
+If you need to manually control the version:
 
 ```bash
-git add VERSION
-git commit -m "chore: bump version to 1.1.0"
+# 1. Update version in pyproject.toml manually
+# 2. Build and test
+make test
+make docker-build
+make docker-test-run
+
+# 3. Build PyPI package
+make pypi-build
+make pypi-check
+make pypi-upload
+
+# 4. Create git tag
 git tag v1.1.0
 git push origin main --tags
 ```
@@ -275,7 +321,7 @@ docker build --no-cache -t iptables-graph .
 
 ```bash
 # Check current version
-cat VERSION
+grep '^version = ' pyproject.toml
 
 # Verify Docker image tag
 docker images | grep iptables-graph
