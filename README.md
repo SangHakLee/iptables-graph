@@ -4,9 +4,8 @@ Visualize iptables packet flow as [Graphviz](https://graphviz.org) diagrams. Con
 
 > Inspired by [AChingYo/iptables-graph](https://github.com/AChingYo/iptables-graph)
 
-[![PyPI](https://img.shields.io/pypi/v/iptables-graph)](https://pypi.org/project/iptables-graph/)
-[![Docker](https://img.shields.io/docker/v/sanghaklee/iptables-graph?label=docker)](https://hub.docker.com/r/sanghaklee/iptables-graph)
-[![License](https://img.shields.io/github/license/SangHakLee/iptables-graph)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/iptables-graph?logo=pypi)](https://pypi.org/project/iptables-graph/)
+[![Docker](https://img.shields.io/docker/v/sanghaklee/iptables-graph?logo=docker)](https://hub.docker.com/r/sanghaklee/iptables-graph)
 
 ## Features
 
