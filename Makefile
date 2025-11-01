@@ -18,7 +18,7 @@ VERSION := $(shell grep '^version = ' pyproject.toml | head -1 | cut -d '"' -f 2
 DOCKER_IMAGE = $(APP_NAME)
 DOCKER_TAG ?= $(VERSION)
 DOCKER_REGISTRY ?= sanghaklee
-DOCKER_FULL_IMAGE = $(DOCKER_REGISTRY)$(DOCKER_IMAGE):$(DOCKER_TAG)
+DOCKER_FULL_IMAGE = $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 .PHONY: all build test test-svg test-png clean help
 .PHONY: docker-build docker-build-exe docker-run docker-test docker-test-run docker-push docker-clean
