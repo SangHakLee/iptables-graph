@@ -8,6 +8,7 @@ __pycache__/
 *.pyo
 *.egg-info/
 *.eggs/
+/.pypirc
 
 # PyInstaller build artifacts
 build/

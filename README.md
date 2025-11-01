@@ -1,6 +1,6 @@
 # iptables-graph
 
-Visualize iptables packet flow as Graphviz diagrams. Convert `iptables-save` output to DOT, SVG, or PNG formats.
+Visualize iptables packet flow as [Graphviz](https://graphviz.org) diagrams. Convert [iptables-save](https://man7.org/linux/man-pages/man8/iptables-save.8.html) output to DOT, SVG, or PNG formats.
 
 > Inspired by [AChingYo/iptables-graph](https://github.com/AChingYo/iptables-graph)
 
@@ -15,7 +15,7 @@ Visualize iptables packet flow as Graphviz diagrams. Convert `iptables-save` out
 - 🔗 Show custom chains and jump targets
 - 📤 Multiple output formats: DOT, SVG, PNG
 - 🐳 Docker-based (no host dependencies!)
-- 📦 PyPI package (pip install)
+- 📦 PyPI package (pipx install)
 
 ## Quick Start
 
@@ -34,7 +34,7 @@ sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph
 sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph -f svg > graph.svg
 
 # Generate PNG
-sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph -f png > graph.png
+sudo iptables-save | docker run --rm -i sanghaklee/iptables-graph -f png > example.png
 ```
 
 **Create an alias for convenience:**
@@ -53,7 +53,7 @@ sudo iptables-save | iptables-graph -f svg > graph.svg
 Install via pip:
 
 ```bash
-pip install iptables-graph
+pipx install iptables-graph
 ```
 
 Use it:
@@ -66,7 +66,7 @@ sudo iptables-save | iptables-graph > graph.dot
 sudo iptables-save | iptables-graph -f svg > graph.svg
 
 # Generate PNG (requires graphviz installed)
-sudo iptables-save | iptables-graph -f png > graph.png
+sudo iptables-save | iptables-graph -f png > example.png
 ```
 
 **Note**: For SVG/PNG conversion, you need to install graphviz:
@@ -108,7 +108,7 @@ sudo iptables-save | iptables-graph -f svg > graph.svg
 ### Generate PNG Image
 
 ```bash
-sudo iptables-save | iptables-graph -f png > graph.png
+sudo iptables-save | iptables-graph -f png > example.png
 ```
 
 ### Read from File
@@ -151,7 +151,7 @@ optional arguments:
 
 ## Example Output
 
-![example.svg](https://raw.githubusercontent.com/SangHakLee/iptables-graph/main/example.svg)
+![example.png](examples/example.png)
 
 ### Color Scheme
 

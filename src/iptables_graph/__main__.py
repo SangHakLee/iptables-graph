@@ -269,7 +269,9 @@ def main():
     # Check for input
     if args.input == sys.stdin and sys.stdin.isatty():
         print("❌ No input provided. Use -i <file> or pipe data via stdin.", file=sys.stderr)
-        print("Example: sudo iptables-save | iptables-graph.py", file=sys.stderr)
+        print("\nExamples:", file=sys.stderr)
+        print("  iptables-graph -i iptables.txt", file=sys.stderr)
+        print("  sudo iptables-save | iptables-graph", file=sys.stderr)
         sys.exit(1)
 
     # Read and parse input

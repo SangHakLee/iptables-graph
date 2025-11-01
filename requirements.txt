@@ -3,9 +3,13 @@
 # For building standalone executable
 pyinstaller>=5.0
 
-# Note: The main script (iptables-graph.py) only uses Python standard library
-# modules and has no external dependencies. This requirements.txt is only
-# needed for building the executable with PyInstaller.
+# For building and uploading PyPI packages
+build>=0.10.0
+twine>=4.0.0
+
+# Note: The main script only uses Python standard library modules and has no
+# external dependencies. This requirements.txt is only needed for building
+# the executable with PyInstaller and publishing to PyPI.
 
 # System dependencies (not Python packages):
 # - graphviz (provides 'dot' binary for format conversion)

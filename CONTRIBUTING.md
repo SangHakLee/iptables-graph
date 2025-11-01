@@ -157,13 +157,16 @@ make docker-test-run
 
 ```bash
 # Build package
-python -m build
+make pypi-build
 
 # Check package
-twine check dist/*
+make pypi-check
 
-# Upload to PyPI (requires credentials)
-twine upload dist/*
+# Upload to TestPyPI (for testing)
+make pypi-test-upload
+
+# Upload to production PyPI (requires credentials)
+make pypi-upload
 ```
 
 ### 4. Push Docker Image

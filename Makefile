@@ -6,6 +6,9 @@ DIST_DIR = dist
 BUILD_DIR = build
 EXAMPLE = examples/example.iptables
 
+# Python command (can be overridden: make pypi-build PYTHON=python)
+PYTHON ?= python3
+
 # Version management
 VERSION := $(shell cat VERSION)
 
@@ -17,6 +20,7 @@ DOCKER_FULL_IMAGE = $(DOCKER_REGISTRY)$(DOCKER_IMAGE):$(DOCKER_TAG)
 
 .PHONY: all build test test-svg test-png clean help
 .PHONY: docker-build docker-build-exe docker-run docker-test docker-test-run docker-push docker-clean
+.PHONY: pypi-build pypi-check pypi-upload pypi-test-upload pypi-clean
 
 all: build
 
@@ -56,6 +60,55 @@ clean:
 	rm -f test-output.*
 	@echo "==> Clean complete"
 
+# ============================================================================
+# PyPI targets
+# ============================================================================
+
+# Build PyPI package
+pypi-build:
+	@echo "==> Building PyPI package (version $(VERSION))..."
+	$(PYTHON) -m build
+	@echo "==> Package built in dist/"
+	@ls -lh dist/
+
+# Check PyPI package
+pypi-check:
+	@echo "==> Checking package with twine..."
+	@if ls dist/*.whl dist/*.tar.gz 1> /dev/null 2>&1; then \
+		twine check dist/*.whl dist/*.tar.gz; \
+	else \
+		echo "ERROR: No .whl or .tar.gz files found in dist/"; \
+		echo "Run 'make pypi-build' first"; \
+		exit 1; \
+	fi
+
+# Upload to TestPyPI (for testing)
+pypi-test-upload: pypi-build pypi-check
+	@echo "==> Uploading to TestPyPI (version $(VERSION))..."
+	twine upload --repository testpypi dist/*.whl dist/*.tar.gz
+	@echo "==> Test upload complete!"
+	@echo "==> Install with: pip install -i https://test.pypi.org/simple/ iptables-graph"
+
+
+# Upload to PyPI (production)
+pypi-upload: pypi-build pypi-check
+	@echo "==> Uploading to PyPI (version $(VERSION))..."
+	@echo "WARNING: This will upload to production PyPI!"
+	@read -p "Continue? [y/N] " -n 1 -r; \
+	echo; \
+	if [[ $$REPLY =~ ^[Yy]$$ ]]; then \
+		twine upload dist/*.whl dist/*.tar.gz; \
+		echo "==> Upload complete!"; \
+	else \
+		echo "==> Upload cancelled"; \
+	fi
+
+# Clean PyPI build artifacts
+pypi-clean:
+	@echo "==> Cleaning PyPI build artifacts..."
+	rm -rf dist/ build/ src/*.egg-info/
+	@echo "==> PyPI cleanup complete"
+
 # Show help
 help:
 	@echo "iptables-graph v$(VERSION)"
@@ -76,6 +129,13 @@ help:
 	@echo "  make docker-build-exe  - Extract executable to dist/ directory"
 	@echo "  make docker-push       - Push image to registry (set DOCKER_REGISTRY=user/)"
 	@echo "  make docker-clean      - Remove Docker images"
+	@echo ""
+	@echo "PyPI package targets:"
+	@echo "  make pypi-build        - Build PyPI package (wheel and sdist)"
+	@echo "  make pypi-check        - Check package with twine"
+	@echo "  make pypi-test-upload  - Upload to TestPyPI (for testing)"
+	@echo "  make pypi-upload       - Upload to production PyPI (requires confirmation)"
+	@echo "  make pypi-clean        - Remove PyPI build artifacts"
 	@echo ""
 	@echo "Quick start (Docker):"
 	@echo "  make docker-build && make docker-test-run"
